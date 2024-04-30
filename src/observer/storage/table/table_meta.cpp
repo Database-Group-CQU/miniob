@@ -107,7 +107,7 @@ RC TableMeta::add_attr(const char* name, const AttrInfoSqlNode attribute)
 
   // 初始化新列的字段元数据
   RC rc = fields_.emplace_back().init(
-      name, attribute.type, new_field_offset, attribute.length, true /*visible*/);
+      attribute.name.c_str(), attribute.type, new_field_offset, attribute.length, true /*visible*/);
   if (rc != RC::SUCCESS) {
     LOG_ERROR("Failed to initialize field meta for new attribute: %s", name);
     return rc;

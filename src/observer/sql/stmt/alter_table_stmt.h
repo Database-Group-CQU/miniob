@@ -29,8 +29,8 @@ class Db;
 class AlterTableStmt : public Stmt
 {
 public:
-  AlterTableStmt(const std::string &table_name)
-      : table_name_(table_name)
+  AlterTableStmt(const std::string &table_name, const AttrInfoSqlNode attr_info)
+      : table_name_(table_name), attr_info_(attr_info)
   {}
   virtual ~AlterTableStmt() = default;
 

@@ -17,7 +17,7 @@ See the Mulan PSL v2 for more details. */
 
 RC AlterTableStmt::alter(Db *db, const AlterTableSqlNode &alter_table, Stmt *&stmt)
 {
-  stmt = new AlterTableStmt(alter_table.relation_name);
+  stmt = new AlterTableStmt(alter_table.relation_name, alter_table.attr_info);
   sql_debug("alter table statement: table name %s", alter_table.relation_name.c_str());
   return RC::SUCCESS;
 }

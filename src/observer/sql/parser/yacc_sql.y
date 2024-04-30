@@ -254,6 +254,8 @@ alter_table_stmt:
         alter_table.relation_name = $3;
 
         alter_table.attr_info = *$5;
+        cout << $5->type <<  $5->name << $5->length << endl;
+        delete($5);
     }
     ;
 
