@@ -95,6 +95,34 @@ RC TableMeta::init(int32_t table_id, const char *name, int field_num, const Attr
   return RC::SUCCESS;
 }
 
+RC TableMeta::add_attr(const char* name, const AttrInfoSqlNode attribute)
+{
+  if (common::is_blank(name)) {
+    LOG_ERROR("Name cannot be empty");
+    return RC::INVALID_ARGUMENT;
+  }
+
+  // 计算新列的偏移量
+  int new_field_offset = record_size_;
+
+  // 初始化新列的字段元数据
+  RC rc = fields_.emplace_back().init(
+      name, attribute.type, new_field_offset, attribute.length, true /*visible*/);
+  if (rc != RC::SUCCESS) {
+    LOG_ERROR("Failed to initialize field meta for new attribute: %s", name);
+    return rc;
+  }
+
+  // 更新记录大小
+  record_size_ += attribute.length;
+
+  LOG_INFO("Successfully added attribute '%s' to table '%s'", name, name_);
+
+  return RC::SUCCESS;
+}
+
+
+
 RC TableMeta::add_index(const IndexMeta &index)
 {
   indexes_.push_back(index);

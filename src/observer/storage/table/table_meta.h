@@ -38,6 +38,8 @@ public:
 
   RC init(int32_t table_id, const char *name, int field_num, const AttrInfoSqlNode attributes[]);
 
+  RC add_attr(const char *name, const AttrInfoSqlNode attribute);
+
   RC add_index(const IndexMeta &index);
 
 public:

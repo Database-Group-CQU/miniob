@@ -134,6 +134,34 @@ RC Db::drop_table(const char *table_name)
   return RC::SUCCESS;
 }
 
+RC Db::alter_table(const char *table_name, const AttrInfoSqlNode attribute)
+{
+  RC rc = RC::SUCCESS;
+
+  if (opened_tables_.count(table_name) == 0) {
+    LOG_WARN("%s has not existed.", table_name);
+    return RC::SCHEMA_TABLE_NOT_EXIST;
+  }
+
+  auto iter = opened_tables_.find(table_name);
+  if (iter == opened_tables_.end()) {
+    LOG_WARN("%s has not existed.", table_name);
+    return RC::SCHEMA_TABLE_NOT_EXIST;
+  }
+  Table *table = iter->second;
+
+  std::string table_file_path = table_meta_file(path_.c_str(), table_name);
+
+  rc = table->alter(table_name, table_file_path.c_str(), path_.c_str(), attribute);
+  if (rc != RC::SUCCESS) {
+    return rc;
+  }
+
+  LOG_INFO("add attr %s success.", table_name);
+  return RC::SUCCESS;
+}
+
+
 Table *Db::find_table(const char *table_name) const
 {
   std::unordered_map<std::string, Table *>::const_iterator iter = opened_tables_.find(table_name);

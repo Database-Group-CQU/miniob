@@ -57,6 +57,8 @@ ArithmeticExpr *create_arithmetic_expression(ArithmeticExpr::Type type,
 %token  SEMICOLON
         CREATE
         DROP
+        ALTER
+        ADD
         TABLE
         TABLES
         INDEX
@@ -148,6 +150,7 @@ ArithmeticExpr *create_arithmetic_expression(ArithmeticExpr::Type type,
 %type <sql_node>            delete_stmt
 %type <sql_node>            create_table_stmt
 %type <sql_node>            drop_table_stmt
+%type <sql_node>            alter_table_stmt
 %type <sql_node>            show_tables_stmt
 %type <sql_node>            desc_table_stmt
 %type <sql_node>            create_index_stmt
@@ -185,6 +188,7 @@ command_wrapper:
   | delete_stmt
   | create_table_stmt
   | drop_table_stmt
+  | alter_table_stmt
   | show_tables_stmt
   | desc_table_stmt
   | create_index_stmt
@@ -241,6 +245,17 @@ drop_table_stmt:    /*drop table 语句的语法解析树*/
       $$->drop_table.relation_name = $3;
       free($3);
     };
+
+alter_table_stmt:
+    ALTER TABLE ID ADD attr_def
+    {
+        $$ = new ParsedSqlNode(SCF_ALTER_TABLE);
+        AlterTableSqlNode &alter_table = $$->alter_table;
+        alter_table.relation_name = $3;
+
+        alter_table.attr_info = *$5;
+    }
+    ;
 
 show_tables_stmt:
     SHOW TABLES {

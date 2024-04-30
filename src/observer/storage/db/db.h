@@ -50,6 +50,8 @@ public:
 
   RC drop_table(const char *table_name);
 
+  RC alter_table(const char *table_name, const AttrInfoSqlNode attribute);
+
   Table *find_table(const char *table_name) const;
   Table *find_table(int32_t table_id) const;
 
