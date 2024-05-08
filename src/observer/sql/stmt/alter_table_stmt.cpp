@@ -21,3 +21,10 @@ RC AlterTableStmt::alter(Db *db, const AlterTableSqlNode &alter_table, Stmt *&st
   sql_debug("alter table statement: table name %s", alter_table.relation_name.c_str());
   return RC::SUCCESS;
 }
+
+RC AlterTableDropAttrStmt::alter(Db *db, const AlterTableDropAttrSqlNode &alter_table_drop_attr, Stmt *&stmt)
+{
+  stmt = new AlterTableDropAttrStmt(alter_table_drop_attr.relation_name, alter_table_drop_attr.attr_name);
+  sql_debug("alter table statement: table name %s", alter_table_drop_attr.relation_name.c_str());
+  return RC::SUCCESS;
+}

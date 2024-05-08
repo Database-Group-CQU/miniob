@@ -40,6 +40,8 @@ public:
 
   RC add_attr(const char *name, const AttrInfoSqlNode attribute);
 
+  RC drop_attr(const char* name, const std::string attribute_name);
+
   RC add_index(const IndexMeta &index);
 
 public:

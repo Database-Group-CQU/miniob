@@ -252,10 +252,20 @@ alter_table_stmt:
         $$ = new ParsedSqlNode(SCF_ALTER_TABLE);
         AlterTableSqlNode &alter_table = $$->alter_table;
         alter_table.relation_name = $3;
+        free($3);
 
         alter_table.attr_info = *$5;
-        cout << $5->type <<  $5->name << $5->length << endl;
         delete($5);
+    }|
+    ALTER TABLE ID DROP ID
+    {
+        $$ = new ParsedSqlNode(SCF_ALTER_TABLE_DROP_ATTR);
+        AlterTableDropAttrSqlNode &alter_table_drop_attr = $$->alter_table_drop_attr;
+        alter_table_drop_attr.relation_name = $3;
+        free($3);
+
+        alter_table_drop_attr.attr_name = $5;
+        free($5);
     }
     ;
 

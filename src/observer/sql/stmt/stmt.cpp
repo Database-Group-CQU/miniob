@@ -67,6 +67,10 @@ RC Stmt::create_stmt(Db *db, ParsedSqlNode &sql_node, Stmt *&stmt)
       return AlterTableStmt::alter(db, sql_node.alter_table, stmt);
     }
 
+    case SCF_ALTER_TABLE_DROP_ATTR: {
+      return AlterTableDropAttrStmt::alter(db, sql_node.alter_table_drop_attr, stmt);
+    }
+
     case SCF_DESC_TABLE: {
       return DescTableStmt::create(db, sql_node.desc_table, stmt);
     }

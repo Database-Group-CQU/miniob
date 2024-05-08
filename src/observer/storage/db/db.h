@@ -52,6 +52,8 @@ public:
 
   RC alter_table(const char *table_name, const AttrInfoSqlNode attribute);
 
+  RC alter_table_drop(const char *table_name, const std::string attribute_name);
+
   Table *find_table(const char *table_name) const;
   Table *find_table(int32_t table_id) const;
 

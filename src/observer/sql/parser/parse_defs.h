@@ -182,6 +182,16 @@ struct AlterTableSqlNode
 };
 
 /**
+ * @brief 描述一个alter table语句
+ * @ingroup SQLParser
+ */
+struct AlterTableDropAttrSqlNode
+{
+  std::string relation_name;  ///< 表名
+  std::string attr_name;  ///< attr_name
+};
+
+/**
  * @brief 描述一个create index语句
  * @ingroup SQLParser
  * @details 创建索引时，需要指定索引名，表名，字段名。
@@ -277,6 +287,7 @@ enum SqlCommandFlag
   SCF_CREATE_TABLE,
   SCF_DROP_TABLE,
   SCF_ALTER_TABLE,
+  SCF_ALTER_TABLE_DROP_ATTR,
   SCF_CREATE_INDEX,
   SCF_DROP_INDEX,
   SCF_SYNC,
@@ -309,6 +320,7 @@ public:
   CreateTableSqlNode  create_table;
   DropTableSqlNode    drop_table;
   AlterTableSqlNode   alter_table;
+  AlterTableDropAttrSqlNode   alter_table_drop_attr;
   CreateIndexSqlNode  create_index;
   DropIndexSqlNode    drop_index;
   DescTableSqlNode    desc_table;

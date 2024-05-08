@@ -58,7 +58,7 @@ RC TableMeta::init(int32_t table_id, const char *name, int field_num, const Attr
   RC rc = RC::SUCCESS;
 
   int field_offset  = 0;
-  int trx_field_num = 0;
+  int trx_field_num = 0; //事务，暂时不用考虑
 
   const vector<FieldMeta> *trx_fields = TrxKit::instance()->trx_fields();
   if (trx_fields != nullptr) {
@@ -121,6 +121,29 @@ RC TableMeta::add_attr(const char* name, const AttrInfoSqlNode attribute)
   return RC::SUCCESS;
 }
 
+RC TableMeta::drop_attr(const char* name, const std::string attribute_name)
+{
+    if (common::is_blank(name)) {
+        LOG_ERROR("Name cannot be empty");
+        return RC::INVALID_ARGUMENT;
+    }
+
+    auto it = std::find_if(fields_.begin(), fields_.end(), [&](const FieldMeta& field) {
+        return strcmp(field.name(), attribute_name.c_str()) == 0;
+    });
+
+    if (it != fields_.end()) {
+        LOG_INFO("Successfully dropped attribute '%s' from table '%s'", attribute_name.c_str(), name_);
+        fields_.erase(it);
+    } else {
+        LOG_ERROR("Attribute '%s' not found in table '%s'", attribute_name.c_str(), name_);
+        return RC::INVALID_ARGUMENT;
+    }
+
+    record_size_ -= it->len();
+
+    return RC::SUCCESS;
+}
 
 
 RC TableMeta::add_index(const IndexMeta &index)

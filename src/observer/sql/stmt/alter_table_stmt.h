@@ -45,3 +45,23 @@ private:
   std::string                  table_name_;
   AttrInfoSqlNode              attr_info_;
 };
+
+class AlterTableDropAttrStmt : public Stmt
+{
+public:
+  AlterTableDropAttrStmt(const std::string &table_name, const std::string attr_name)
+      : table_name_(table_name), attr_name_(attr_name)
+  {}
+  virtual ~AlterTableDropAttrStmt() = default;
+
+  StmtType type() const override { return StmtType::ALTER_TABLE_DROP_ATTR; }
+
+  const std::string                  &table_name() const { return table_name_; }
+  const std::string                  &attr_name()  const { return attr_name_; }
+
+  static RC alter(Db *db, const AlterTableDropAttrSqlNode &alter_table, Stmt *&stmt);
+
+private:
+  std::string                  table_name_;
+  std::string                  attr_name_;
+};

@@ -70,6 +70,7 @@ RC Table::create(int32_t table_id, const char *path, const char *name, const cha
   }
 
   RC rc = RC::SUCCESS;
+  // Actually,path可以用base_dir拼接出来
 
   // 使用 table_name.table记录一个表的元数据
   // 判断表文件是否已经存在
@@ -187,6 +188,7 @@ RC Table::alter(const char *name, const char *path, const char *base_dir, const 
 
   // 修改表的元数据
   RC rc = table_meta_.add_attr(name, attribute);
+
   if (rc != RC::SUCCESS) {
     LOG_ERROR("Failed to alter table meta. name:%s, ret:%d", name, rc);
     fs.close();
@@ -206,6 +208,51 @@ RC Table::alter(const char *name, const char *path, const char *base_dir, const 
   return RC::SUCCESS;
 }
 
+RC Table::alter_drop(const char *name, const char *path, const char *base_dir, const std::string attribute_name)
+{
+  if (common::is_blank(name)) {
+    LOG_WARN("Name cannot be empty");
+    return RC::INVALID_ARGUMENT;
+  }
+
+  LOG_INFO("Begin to alter table %s:%s", base_dir, name);
+
+  // 删除表文件
+  if (unlink(path) != 0) {
+    if (errno != ENOENT) {
+      LOG_ERROR("Failed to remove table file. file name=%s, errmsg=%s", path, strerror(errno));
+      return RC::IOERR_DELETE;
+    }
+  }
+
+  // 打开或创建表文件
+  std::fstream fs;
+  fs.open(path, std::ios_base::out | std::ios_base::binary);
+  if (!fs.is_open()) {
+    LOG_ERROR("Failed to open table file for alter. file name=%s", path);
+    return RC::IOERR_OPEN;
+  }
+
+  // 修改表的元数据
+  RC rc = table_meta_.drop_attr(name, attribute_name);
+  if (rc != RC::SUCCESS) {
+    LOG_ERROR("Failed to alter table meta. name:%s, ret:%d", name, rc);
+    fs.close();
+    return rc;
+  }
+
+  // 序列化更新后的表元数据到文件
+  if (!table_meta_.serialize(fs)) {
+    LOG_ERROR("Failed to serialize updated table meta to file. file name=%s", path);
+    fs.close();
+    return RC::IOERR_WRITE;
+  }
+
+  fs.close();
+
+  LOG_INFO("Successfully altered table %s:%s", base_dir, name);
+  return RC::SUCCESS;
+}
 
 RC Table::open(const char *meta_file, const char *base_dir)
 {
